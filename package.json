@@ -1,0 +1,19 @@
+{
+  "name": "perpusqu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "tailwindcss": "npx tailwindcss -i ./public/src/tailwind.css -o ./public/css/tailwind.css --watch",
+    "preinstall": "node preinstall.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.1.8"
+  },
+  "dependencies": {
+    "bootstrap-icons": "^1.10.2"
+  }
+}

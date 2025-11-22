@@ -1,0 +1,147 @@
+<?php
+
+$sub_path = "/buku/sub-kategori";
+
+$breadcrumbs = "
+    <li class='breadcrumb-item'><a href='/buku'>Buku</a></li>
+    <li class='breadcrumb-item'><a href='/buku/sub-kategori'>Sub Kategori</a></li>
+";
+
+$title = "Data Sub Kategori";
+$subtitle = "Kelola data sub kategori di halaman ini sesuai keperluan.";
+
+require_once VIEW_PATH . "layouts/header.php";
+?>
+
+<?php alertMessage() ?>
+<section class="section mb-4">
+    <div class="row">
+        <div class="col-lg">
+            <div class="card">
+                <div class="card-header pb-2 d-flex justify-content-between align-items-center">
+                    <p class="mb-0">
+                        Form Tambah Data
+                    </p>
+                </div>
+                <hr class="mx-4">
+                <div class="card-body">
+                    <form action="/buku/sub-kategori/store" method="POST">
+                        <div class="row">
+                            <div class="col-lg-12 mb-4">
+                                <label for="kategori_id" class="mb-2">Nama Kategori <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Text</span>
+                                    <select class="form-select <?= error("kategori_id") ?>" id="kategori_id" name="kategori_id">
+                                        <option value="" selected>Pilih Kategori</option>
+                                        <?php foreach (all("kategori_buku") as $kategori) : ?>
+                                            <option value="<?= $kategori->id ?>" <?= old("kategori_id") == $kategori->id ? "selected" : "" ?>><?= $kategori->kode_kategori . "&nbsp;" . "-" . "&nbsp;" . $kategori->nama_kategori ?></option>
+                                        <?php endforeach ?>
+                                    </select>
+                                    <?php errorMessage("kategori_id") ?>
+                                </div>
+                            </div>
+                                <div class="col mb-4">
+                                    <label for="kode_sub_kategori" class="mb-2">Kode Sub Kategori<span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">#</span>
+                                            <input type="text"  name="kode_sub_kategori" id="kode_sub_kategori" class="form-control <?= error("kode_sub_kategori") ?>" placeholder="Masukkan kode kategori..." value="<?= old("kode_sub_kategori") ?>">
+                                            <?php errorMessage("kode_sub_kategori") ?>
+                                        </div><br>
+                                    </div>
+                                    <div class="col ">
+                                    <label for="nama_sub_kategori" class="mb-2">Nama Sub Kategori <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">Text</span>
+                                        <input name="nama_sub_kategori" id="nama_sub_kategori" class="form-control <?= error("nama_kategori") ?>" placeholder="Masukkan nama sub kategori..." value="<?= old("nama_kategori") ?>">
+                                        <?php errorMessage("nama_sub_kategori") ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="row">
+                            <div class="col-auto ms-auto">
+                                <button type="submit" class="btn btn-primary my-4 px-4">Tambah</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg">
+            <div class="card">
+                <div class="card-header pb-2 d-flex justify-content-between align-items-center">
+                    <p class="mb-0">
+                        Tabel Data
+                    </p>
+                    <div class="badge bg-info text-black">
+                        <?= amount("sub_kategori") ?> unit
+                    </div>
+                </div>
+                <hr class="mx-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="table1">
+                            <thead>
+                                <tr class="text-nowrap">
+                                    <th>Kode Kategori</th>
+                                    <th>Kode Sub Kategori</th>
+                                    <th>Nama Sub Kategori</th>
+                                    <th>Jumlah Buku</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if(amount("sub_kategori") == 0) : ?>
+                                    <tr class="text-nowrap">
+                                        <td colspan="100%" style="text-align: center;">Data tidak ada</td>
+                                    </tr>
+                                <?php endif ?>
+                                <?php foreach (all("sub_kategori") as $kategori) : ?>
+                                    <tr class="text-nowrap">
+                                      
+                                        <td><?= get("kategori_buku", $kategori->kategori_id)->kode_kategori ?></td>
+                                        <td><?= $kategori->kode_sub_kategori ?></td>
+                                        <td><?= $kategori->nama_sub_kategori ?></td>
+                                        <td><?= amountWhere("buku", "sub_kategori_id", $kategori->id) ?> buah</td>
+                                        <td>
+                                            <a href="/buku/sub-kategori/edit?id=<?= $kategori->id ?>" class="badge bg-warning text-black me-1">Edit</a>
+                                            <a href="#" class="badge bg-<?= kategoriRelational($kategori->id) ? "secondary" : "danger" ?> text-white me-1" data-bs-toggle="modal" data-bs-target="#hapus<?= $kategori->id ?>">Hapus</a>
+                                        </td>
+                                        <div class="modal fade text-left" id="hapus<?= $kategori->id ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel120" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger py-2">
+                                                        <h5 class="modal-title white" id="myModalLabel120">Hapus kategori
+                                                        </h5>
+                                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <i data-feather="x"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Apakah anda yakin ingin menghapus <b><?= $kategori->nama_kategori ?></b>? Data yang sudah dihapus tidak dapat dikembalikan!
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <form action="/buku/sub-kategori/delete" method="POST">
+                                                            <input hidden name="id" value="<?= $kategori->id ?>">
+                                                            <button type="submit" class="btn btn-danger px-4" data-bs-dismiss="modal">
+                                                                <span class="d-block">Hapus</span>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                <?php endforeach ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+
+<?php require_once VIEW_PATH . "layouts/footer.php" ?>
